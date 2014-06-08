@@ -12,6 +12,8 @@ RUSTC := rustc
 
 RUSTFLAGS :=
 
+CRATE := $(SRCDIR)rave/bin.rs
+
 -include $(DEPINFODIR)rave.d
 
 all: $(BINDIR)rave
@@ -25,9 +27,15 @@ $(DEPINFODIR): $(OBJDIR)
 $(BINDIR):
 	@mkdir $(BINDIR)
 
-$(BINDIR)rave: $(SRCDIR)rave/rave.rs | $(BINDIR) $(DEPINFODIR)
-	$(RUSTC) -L $(BINDIR) --out-dir $(BINDIR) --dep-info $(DEPINFODIR)rave.d $<
+$(BINDIR)rave: $(CRATE) | $(BINDIR) $(DEPINFODIR)
+	$(RUSTC) -L $(BINDIR) -o $(BINDIR)rave --dep-info $(DEPINFODIR)rave.d $<
 
 clean:
 	@rm -Rf $(BINDIR)
 	@rm -Rf $(OBJDIR)
+
+$(BINDIR)rave-test: $(CRATE) | $(BINDIR) $(DEPINFODIR)
+	$(RUSTC) -L $(BINDIR) --test -o $(BINDIR)rave-test --dep-info $(DEPINFODIR)rave.d $<
+
+test: $(BINDIR)rave-test
+	$(BINDIR)/rave-test
