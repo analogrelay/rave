@@ -1,3 +1,1 @@
-pub use self::loc::SourceLocation;
-
-mod loc;
+mod buf;
